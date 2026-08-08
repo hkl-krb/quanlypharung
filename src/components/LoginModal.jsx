@@ -10,6 +10,7 @@ import {
   X
 } from 'lucide-react';
 import { DEMO_USERS } from '../data/usersData';
+import logoKiemLam from '../assets/logo_kiemlam.png';
 
 export default function LoginModal({ isOpen, onLogin, demoUsers = DEMO_USERS }) {
   const [username, setUsername] = useState('');
@@ -47,12 +48,16 @@ export default function LoginModal({ isOpen, onLogin, demoUsers = DEMO_USERS }) 
         
         {/* Modal Header Branding */}
         <div className="p-6 bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950/40 border-b border-slate-800 text-center relative">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center mx-auto mb-3 shadow-xl shadow-emerald-600/30 ring-4 ring-emerald-500/20">
-            <TreePine className="w-8 h-8 text-white" />
+          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-white shadow-xl border-2 border-emerald-600/40 p-1.5 flex items-center justify-center mx-auto mb-3 ring-4 ring-emerald-500/15 shrink-0 overflow-hidden">
+            <img 
+              src={logoKiemLam} 
+              alt="Phù hiệu Hạt Kiểm Lâm Khu Vực Krông Bông" 
+              className="w-full h-full object-contain filter drop-shadow-md scale-110"
+            />
           </div>
 
           <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-            Hạt Kiểm Lâm Krông Bông
+            Hạt Kiểm Lâm Khu Vực Krông Bông
           </span>
 
           <h2 className="text-xl font-extrabold text-white mt-2 tracking-tight">
@@ -145,7 +150,7 @@ export default function LoginModal({ isOpen, onLogin, demoUsers = DEMO_USERS }) 
 
         {/* Modal Footer */}
         <div className="p-3 bg-slate-950 text-center border-t border-slate-800 text-[11px] text-slate-500">
-          Hệ thống quản lý sử dụng nội bộ - Hạt Kiểm Lâm Krông Bông
+          Hệ thống quản lý sử dụng nội bộ - Hạt Kiểm Lâm Khu Vực Krông Bông
         </div>
 
       </div>

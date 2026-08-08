@@ -183,9 +183,18 @@ export default function App() {
   
   // Authentication & Role State
   const [currentUser, setCurrentUser] = useState(() => {
-    return (Array.isArray(usersList) && usersList.length > 0 && usersList[0]) ? usersList[0] : DEMO_USERS[0];
+    try {
+      const saved = localStorage.getItem('krongbong_current_user');
+      if (saved) return JSON.parse(saved);
+    } catch(e) {}
+    return null;
   });
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(() => {
+    try {
+      const saved = localStorage.getItem('krongbong_current_user');
+      return !saved;
+    } catch(e) { return true; }
+  });
   const [isUserManagementOpen, setIsUserManagementOpen] = useState(false);
 
   // Filter States
@@ -215,17 +224,20 @@ export default function App() {
   const handleLogin = (user) => {
     setCurrentUser(user);
     setIsLoginModalOpen(false);
+    localStorage.setItem('krongbong_current_user', JSON.stringify(user));
     showToast(`Đăng nhập thành công với vai trò: ${user.roleName}`);
   };
 
   const handleLogout = () => {
     setCurrentUser(null);
     setIsLoginModalOpen(true);
+    localStorage.removeItem('krongbong_current_user');
     showToast('Đã đăng xuất khỏi hệ thống', 'warning');
   };
 
   const handleSwitchUser = (user) => {
     setCurrentUser(user);
+    localStorage.setItem('krongbong_current_user', JSON.stringify(user));
     showToast(`Đã chuyển sang tài khoản: ${user.fullName} (${user.roleName})`);
   };
 
