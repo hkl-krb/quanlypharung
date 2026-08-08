@@ -7,7 +7,6 @@ import {
   Layers,
   ChevronRight,
   ChevronLeft,
-  Info,
   Sparkles,
   Users,
   ShieldCheck
@@ -16,18 +15,12 @@ import {
 export default function Sidebar({ activeTab, setActiveTab, onOpenUserManagement, theme = 'light' }) {
   const isLight = theme === 'light';
 
-  // Slide 2 ảnh thực địa Lực lượng Kiểm lâm Krông Bông
+  // Slide 2 ảnh thực tế Kiểm lâm Krông Bông (Chỉ hiển thị ảnh thuần túy, không có chữ)
   const [currentSlide, setCurrentSlide] = useState(0);
   const baseUrl = import.meta.env.BASE_URL || './';
   const slides = [
-    {
-      src: `${baseUrl}images/ranger1.jpg`,
-      caption: 'Đội Kiểm Lâm cơ động thực địa địa bàn Krông Bông'
-    },
-    {
-      src: `${baseUrl}images/ranger2.jpg`,
-      caption: 'Lực lượng bảo vệ rừng Hạt Kiểm Lâm Krông Bông'
-    }
+    { src: `${baseUrl}images/ranger1.jpg` },
+    { src: `${baseUrl}images/ranger2.jpg` }
   ];
 
   useEffect(() => {
@@ -155,16 +148,16 @@ export default function Sidebar({ activeTab, setActiveTab, onOpenUserManagement,
           </div>
         )}
 
-        {/* Đơn vị quản lý & Slide 2 ảnh thực địa */}
+        {/* Đơn vị quản lý & Slide 2 ảnh thuần túy */}
         <div className="pt-3 border-t border-slate-200 dark:border-slate-800 space-y-2">
           <div className="flex items-center gap-1.5 text-xs font-extrabold text-emerald-800 dark:text-emerald-400 px-1 uppercase tracking-wider">
             <ShieldCheck className="w-4 h-4 text-emerald-600" />
             <span>Đơn Vị Quản Lý</span>
           </div>
 
-          {/* 2-Image Slide Carousel */}
+          {/* 2-Image Pure Slide Carousel (No text/captions) */}
           <div className="relative rounded-2xl overflow-hidden border border-slate-300 dark:border-slate-800 shadow-md group">
-            <div className="relative h-36 w-full overflow-hidden bg-slate-950">
+            <div className="relative h-40 w-full overflow-hidden bg-slate-950">
               {slides.map((slide, index) => (
                 <div
                   key={index}
@@ -174,13 +167,9 @@ export default function Sidebar({ activeTab, setActiveTab, onOpenUserManagement,
                 >
                   <img
                     src={slide.src}
-                    alt={slide.caption}
+                    alt="Lực lượng Kiểm lâm Krông Bông"
                     className="w-full h-full object-cover object-center"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/25 to-transparent"></div>
-                  <div className="absolute bottom-2 left-2.5 right-2.5 text-[10px] font-bold text-white leading-tight drop-shadow-md">
-                    {slide.caption}
-                  </div>
                 </div>
               ))}
             </div>
@@ -188,7 +177,7 @@ export default function Sidebar({ activeTab, setActiveTab, onOpenUserManagement,
             {/* Carousel Left / Right Navigation Buttons */}
             <button
               onClick={() => setCurrentSlide(prev => (prev === 0 ? slides.length - 1 : prev - 1))}
-              className="absolute left-1.5 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-slate-950/70 hover:bg-slate-950 text-white transition z-20 opacity-0 group-hover:opacity-100 shadow"
+              className="absolute left-1.5 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-slate-950/60 hover:bg-slate-950 text-white transition z-20 opacity-0 group-hover:opacity-100 shadow"
               title="Ảnh trước"
             >
               <ChevronLeft className="w-3.5 h-3.5" />
@@ -196,20 +185,20 @@ export default function Sidebar({ activeTab, setActiveTab, onOpenUserManagement,
             
             <button
               onClick={() => setCurrentSlide(prev => (prev + 1) % slides.length)}
-              className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-slate-950/70 hover:bg-slate-950 text-white transition z-20 opacity-0 group-hover:opacity-100 shadow"
+              className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-slate-950/60 hover:bg-slate-950 text-white transition z-20 opacity-0 group-hover:opacity-100 shadow"
               title="Ảnh tiếp theo"
             >
               <ChevronRight className="w-3.5 h-3.5" />
             </button>
 
-            {/* Carousel Indicators */}
-            <div className="absolute top-2 right-2 flex items-center gap-1 z-20 bg-slate-950/60 px-2 py-0.5 rounded-full border border-white/20">
+            {/* Carousel Slide Dots (Subtle) */}
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-20 bg-slate-950/50 backdrop-blur-sm px-2 py-1 rounded-full border border-white/20">
               {slides.map((_, idx) => (
                 <button
                   key={idx}
                   onClick={() => setCurrentSlide(idx)}
                   className={`h-1.5 rounded-full transition-all ${
-                    idx === currentSlide ? 'bg-emerald-400 w-3.5' : 'bg-white/50 w-1.5'
+                    idx === currentSlide ? 'bg-emerald-400 w-3.5' : 'bg-white/60 w-1.5'
                   }`}
                 ></button>
               ))}
