@@ -18,9 +18,21 @@ import { exportToExcel } from './utils/exportExcel';
 import { getWGS84Location } from './utils/coordinateConverter';
 import { CheckCircle, AlertCircle, X, Shield, Eye, UserCheck, Banknote, RefreshCw, ExternalLink } from 'lucide-react';
 
+import { 
+  subscribeToIncidents, 
+  saveIncidentToFirebase, 
+  deleteIncidentFromFirebase, 
+  seedInitialIncidents, 
+  subscribeToUsers, 
+  saveUserToFirebase, 
+  deleteUserFromFirebase 
+} from './services/firebaseService';
+
 const ALL_INITIAL_DATA = [...INITIAL_DEFORESTATION_DATA_2026, ...INITIAL_DEFORESTATION_DATA_2025];
 
 export default function App() {
+  const [isFirebaseConnected, setIsFirebaseConnected] = useState(false);
+
   // Theme State (Default to 'light')
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem('krongbong_theme') || 'light';
@@ -34,13 +46,12 @@ export default function App() {
     setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
   };
 
-  // Persistent Incident Data in localStorage (Forces 2026 & 2025 Full 194 Records v10)
+  // Persistent Incident Data in localStorage & Firebase Realtime Cloud Sync
   const [data, setData] = useState(() => {
     try {
       const saved = localStorage.getItem('krongbong_incidents_v10_full');
       if (saved) {
         const parsed = JSON.parse(saved);
-        // Force upgrade if cached data is missing 2025 data (less than 150 records)
         if (Array.isArray(parsed) && parsed.length >= 150 && parsed.some(d => d.nam === 2025)) {
           return parsed;
         }
@@ -60,16 +71,7 @@ export default function App() {
     }
   }, [data]);
 
-  // Force reset data function (Revert strictly to initial dataset)
-  const handleResetToInitialData = () => {
-    if (window.confirm('Bạn có muốn khôi phục và đồng bộ toàn bộ 194 vụ việc gốc (Năm 2026: 41 vụ, Năm 2025: 153 vụ)?')) {
-      setData(ALL_INITIAL_DATA);
-      localStorage.setItem('krongbong_incidents_v10_full', JSON.stringify(ALL_INITIAL_DATA));
-      showToast('Đã khôi phục hoàn toàn dữ liệu 194 vụ việc gốc (2025 & 2026)!');
-    }
-  };
-
-  // Persistent Dynamic Users List State in localStorage
+  // Persistent Dynamic Users List State in localStorage & Firebase Sync
   const [usersList, setUsersList] = useState(() => {
     try {
       const saved = localStorage.getItem('krongbong_users_v3');
@@ -86,6 +88,37 @@ export default function App() {
       console.error('Error saving users list to localStorage', e);
     }
   }, [usersList]);
+
+  // Realtime Firebase Firestore Subscriptions (Syncs all mobile & desktop browsers)
+  useEffect(() => {
+    const unsubIncidents = subscribeToIncidents((realtimeIncidents) => {
+      if (Array.isArray(realtimeIncidents) && realtimeIncidents.length > 0) {
+        setData(realtimeIncidents);
+        setIsFirebaseConnected(true);
+      }
+    });
+
+    const unsubUsers = subscribeToUsers((realtimeUsers) => {
+      if (Array.isArray(realtimeUsers) && realtimeUsers.length > 0) {
+        setUsersList(realtimeUsers);
+      }
+    });
+
+    return () => {
+      unsubIncidents();
+      unsubUsers();
+    };
+  }, []);
+
+  // Force reset data function (Revert strictly to initial dataset & sync Firebase)
+  const handleResetToInitialData = async () => {
+    if (window.confirm('Bạn có muốn khôi phục và đồng bộ toàn bộ 194 vụ việc gốc (Năm 2026: 41 vụ, Năm 2025: 153 vụ) lên Cloud Firebase?')) {
+      setData(ALL_INITIAL_DATA);
+      localStorage.setItem('krongbong_incidents_v10_full', JSON.stringify(ALL_INITIAL_DATA));
+      await seedInitialIncidents(ALL_INITIAL_DATA);
+      showToast('🔥 Đã khôi phục và đồng bộ 194 vụ việc gốc lên Google Firebase Cloud!');
+    }
+  };
 
   const [activeTab, setActiveTab] = useState('dashboard');
   
@@ -135,19 +168,21 @@ export default function App() {
     showToast(`Đã chuyển sang tài khoản: ${user.fullName} (${user.roleName})`);
   };
 
-  // Admin User Management Handlers
+  // Admin User Management Handlers (Synced to Firebase)
   const handleUpdateUser = (updatedUser) => {
     setUsersList(prev => prev.map(u => u.id === updatedUser.id ? updatedUser : u));
     if (currentUser?.id === updatedUser.id) {
       setCurrentUser(updatedUser);
     }
-    showToast(`Đã lưu thay đổi tài khoản ${updatedUser.fullName} vào cơ sở dữ liệu!`);
+    saveUserToFirebase(updatedUser);
+    showToast(`🔥 Đã lưu thay đổi tài khoản ${updatedUser.fullName} lên Google Cloud!`);
   };
 
   const handleAddUser = (newUser) => {
     const userWithId = { ...newUser, id: Date.now() };
     setUsersList(prev => [...prev, userWithId]);
-    showToast(`Đã tạo thành công tài khoản mới: ${newUser.fullName}`);
+    saveUserToFirebase(userWithId);
+    showToast(`🔥 Đã tạo thành công tài khoản mới: ${newUser.fullName} trên Google Cloud!`);
   };
 
   const handleDeleteUser = (userId) => {
@@ -158,7 +193,8 @@ export default function App() {
       return;
     }
     setUsersList(prev => prev.filter(u => u.id !== userId));
-    showToast(`Đã xóa thành công tài khoản: ${user.fullName}`);
+    deleteUserFromFirebase(userId);
+    showToast(`🔥 Đã xóa tài khoản ${user.fullName} khỏi Google Cloud!`);
   };
 
   // Reset Filters
@@ -242,12 +278,14 @@ export default function App() {
     return filteredData.reduce((acc, curr) => acc + Number(curr.tongDienTichBiPha || 0), 0);
   }, [filteredData]);
 
-  // Incident Item Handlers
-  const handleSaveItem = (itemData) => {
+  // Incident Item Handlers (Synced Realtime to Firebase Cloud Firestore)
+  const handleSaveItem = async (itemData) => {
     const itemYear = Number(itemData.nam) || (selectedYear !== 0 ? selectedYear : 2026);
     if (editingItem) {
-      setData(prev => prev.map(item => item.id === editingItem.id ? { ...itemData, nam: itemYear, id: item.id } : item));
-      showToast(`Đã cập nhật thành công vụ việc cho Năm ${itemYear}! Thống kê hệ thống đã tự động tính toán lại.`);
+      const updatedItem = { ...itemData, nam: itemYear, id: editingItem.id };
+      setData(prev => prev.map(item => item.id === editingItem.id ? updatedItem : item));
+      await saveIncidentToFirebase(updatedItem);
+      showToast(`🔥 Đã lưu cập nhật vụ việc Năm ${itemYear} lên Google Firebase Realtime Cloud!`);
     } else {
       const newItem = {
         ...itemData,
@@ -256,14 +294,16 @@ export default function App() {
         nam: itemYear
       };
       setData(prev => [newItem, ...prev]);
-      showToast(`Đã thêm vụ vi phạm mới vào CSDL Năm ${itemYear}! Thống kê hệ thống đã tự động tính toán lại.`);
+      await saveIncidentToFirebase(newItem);
+      showToast(`🔥 Đã thêm vụ vi phạm mới vào Google Firebase Realtime Cloud! Tự động đồng bộ các máy khác.`);
     }
   };
 
-  const handleDeleteItem = (id) => {
-    if (window.confirm('Bạn có chắc chắn muốn xóa bản ghi vụ vi phạm này khỏi hệ thống?')) {
+  const handleDeleteItem = async (id) => {
+    if (window.confirm('Bạn có chắc chắn muốn xóa bản ghi vụ vi phạm này khỏi hệ thống & Cloud Firebase?')) {
       setData(prev => prev.filter(item => item.id !== id));
-      showToast('Đã xóa vụ việc khỏi danh sách', 'warning');
+      await deleteIncidentFromFirebase(id);
+      showToast('🔥 Đã xóa vụ việc khỏi Google Cloud Firebase', 'warning');
     }
   };
 
@@ -398,6 +438,7 @@ export default function App() {
         totalArea={totalArea}
         selectedYear={selectedYear}
         setSelectedYear={setSelectedYear}
+        isFirebaseConnected={isFirebaseConnected}
       />
 
       {/* Main Application Layout */}
