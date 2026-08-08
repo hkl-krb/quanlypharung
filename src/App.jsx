@@ -91,18 +91,28 @@ export default function App() {
 
   // Realtime Firebase Firestore Subscriptions (Syncs all mobile & desktop browsers)
   useEffect(() => {
-    const unsubIncidents = subscribeToIncidents((realtimeIncidents) => {
-      if (Array.isArray(realtimeIncidents) && realtimeIncidents.length > 0) {
-        setData(realtimeIncidents);
-        setIsFirebaseConnected(true);
+    const unsubIncidents = subscribeToIncidents(
+      (realtimeIncidents) => {
+        if (Array.isArray(realtimeIncidents) && realtimeIncidents.length > 0) {
+          setData(realtimeIncidents);
+          setIsFirebaseConnected(true);
+        }
+      },
+      (err) => {
+        console.warn('Firebase error on subscribeToIncidents:', err);
       }
-    });
+    );
 
-    const unsubUsers = subscribeToUsers((realtimeUsers) => {
-      if (Array.isArray(realtimeUsers) && realtimeUsers.length > 0) {
-        setUsersList(realtimeUsers);
+    const unsubUsers = subscribeToUsers(
+      (realtimeUsers) => {
+        if (Array.isArray(realtimeUsers) && realtimeUsers.length > 0) {
+          setUsersList(realtimeUsers);
+        }
+      },
+      (err) => {
+        console.warn('Firebase error on subscribeToUsers:', err);
       }
-    });
+    );
 
     return () => {
       unsubIncidents();
@@ -110,13 +120,35 @@ export default function App() {
     };
   }, []);
 
+  // Sync All Current Data to Firebase Cloud Firestore
+  const handleSyncAllToFirebase = async () => {
+    try {
+      showToast('⏳ Đang đẩy dữ liệu lên Firebase Cloud...', 'warning');
+      await seedInitialIncidents(data);
+      setIsFirebaseConnected(true);
+      showToast(`🔥 Đã đồng bộ thành công ${data.length} vụ việc lên Google Firebase Cloud!`);
+    } catch (err) {
+      console.error('Lỗi nạp Firebase:', err);
+      if (err?.code === 'permission-denied' || err?.message?.includes('permission')) {
+        alert('⚠️ Firebase chưa mở Quyền Đọc/Ghi (Permission Denied)!\n\nĐể đồng bộ dữ liệu giữa các máy, hãy vào Firebase Console (quanlypharung) > Firestore Database > Rules và cập nhật:\n\nrules_version = \'2\';\nservice cloud.firestore {\n  match /databases/{database}/documents {\n    match /{document=**} {\n      allow read, write: if true;\n    }\n  }\n}');
+      } else {
+        showToast(`❌ Lỗi đồng bộ Firebase: ${err.message}`, 'error');
+      }
+    }
+  };
+
   // Force reset data function (Revert strictly to initial dataset & sync Firebase)
   const handleResetToInitialData = async () => {
     if (window.confirm('Bạn có muốn khôi phục và đồng bộ toàn bộ 194 vụ việc gốc (Năm 2026: 41 vụ, Năm 2025: 153 vụ) lên Cloud Firebase?')) {
       setData(ALL_INITIAL_DATA);
       localStorage.setItem('krongbong_incidents_v10_full', JSON.stringify(ALL_INITIAL_DATA));
-      await seedInitialIncidents(ALL_INITIAL_DATA);
-      showToast('🔥 Đã khôi phục và đồng bộ 194 vụ việc gốc lên Google Firebase Cloud!');
+      try {
+        await seedInitialIncidents(ALL_INITIAL_DATA);
+        setIsFirebaseConnected(true);
+        showToast('🔥 Đã khôi phục và đồng bộ 194 vụ việc gốc lên Google Firebase Cloud!');
+      } catch (err) {
+        showToast('Đã khôi phục dữ liệu gốc trên máy cục bộ!', 'warning');
+      }
     }
   };
 
@@ -281,29 +313,43 @@ export default function App() {
   // Incident Item Handlers (Synced Realtime to Firebase Cloud Firestore)
   const handleSaveItem = async (itemData) => {
     const itemYear = Number(itemData.nam) || (selectedYear !== 0 ? selectedYear : 2026);
+    let finalItem;
     if (editingItem) {
-      const updatedItem = { ...itemData, nam: itemYear, id: editingItem.id };
-      setData(prev => prev.map(item => item.id === editingItem.id ? updatedItem : item));
-      await saveIncidentToFirebase(updatedItem);
-      showToast(`🔥 Đã lưu cập nhật vụ việc Năm ${itemYear} lên Google Firebase Realtime Cloud!`);
+      finalItem = { ...itemData, nam: itemYear, id: editingItem.id, docId: editingItem.docId || String(editingItem.id) };
+      setData(prev => prev.map(item => item.id === editingItem.id ? finalItem : item));
     } else {
-      const newItem = {
+      finalItem = {
         ...itemData,
         id: Date.now(),
         stt: data.length + 1,
         nam: itemYear
       };
-      setData(prev => [newItem, ...prev]);
-      await saveIncidentToFirebase(newItem);
-      showToast(`🔥 Đã thêm vụ vi phạm mới vào Google Firebase Realtime Cloud! Tự động đồng bộ các máy khác.`);
+      setData(prev => [finalItem, ...prev]);
+    }
+
+    try {
+      await saveIncidentToFirebase(finalItem);
+      showToast(`🔥 Đã lưu thành công vụ việc Năm ${itemYear} lên Google Firebase Cloud!`);
+    } catch (err) {
+      console.error('Lỗi khi lưu lên Firebase:', err);
+      if (err?.code === 'permission-denied' || err?.message?.includes('permission')) {
+        alert('⚠️ Firebase chưa mở Quyền Đọc/Ghi (Permission Denied)!\n\nVui lòng vào Firebase Console > Firestore Database > Rules và cập nhật:\n\nallow read, write: if true;');
+      } else {
+        showToast(`⚠️ Đã lưu trên máy. Chưa thể ghi lên Cloud: ${err.message}`, 'warning');
+      }
     }
   };
 
   const handleDeleteItem = async (id) => {
+    const targetItem = data.find(item => item.id === id);
     if (window.confirm('Bạn có chắc chắn muốn xóa bản ghi vụ vi phạm này khỏi hệ thống & Cloud Firebase?')) {
       setData(prev => prev.filter(item => item.id !== id));
-      await deleteIncidentFromFirebase(id);
-      showToast('🔥 Đã xóa vụ việc khỏi Google Cloud Firebase', 'warning');
+      try {
+        await deleteIncidentFromFirebase(id, targetItem?.docId);
+        showToast('🔥 Đã xóa vụ việc khỏi Google Cloud Firebase', 'warning');
+      } catch (err) {
+        showToast('Đã xóa khỏi máy cục bộ (chưa xóa trên Cloud)', 'warning');
+      }
     }
   };
 
@@ -336,7 +382,7 @@ export default function App() {
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = (evt) => {
+    reader.onload = async (evt) => {
       try {
         const bstr = evt.target.result;
         const wb = XLSX.read(bstr, { type: 'binary' });
@@ -386,7 +432,12 @@ export default function App() {
 
         if (parsedItems.length > 0) {
           setData(parsedItems);
-          showToast(`Đã nhập thành công ${parsedItems.length} vụ việc từ file Excel!`);
+          try {
+            await seedInitialIncidents(parsedItems);
+            showToast(`🔥 Đã nhập ${parsedItems.length} vụ việc từ Excel & đồng bộ lên Google Cloud Firebase!`);
+          } catch (err) {
+            showToast(`Đã nhập ${parsedItems.length} vụ việc từ Excel vào máy cục bộ!`, 'warning');
+          }
         } else {
           showToast('Không tìm thấy bản ghi dữ liệu hợp lệ trong tập tin', 'warning');
         }
@@ -469,14 +520,25 @@ export default function App() {
                   Đang xem dữ liệu: <strong className="text-emerald-700 dark:text-emerald-400 uppercase">{selectedYear === 0 ? 'Tất cả các năm (194 vụ)' : `Năm ${selectedYear} (${filteredData.length} vụ)`}</strong>. Đã phân tách dữ liệu 2025 & 2026 độc lập theo chỉ đạo.
                 </span>
               </div>
-              <button
-                onClick={handleResetToInitialData}
-                className="flex items-center gap-1 bg-emerald-700 hover:bg-emerald-600 text-white font-extrabold px-3 py-1 rounded-lg text-[11px] transition shadow-sm ml-auto"
-                title="Khôi phục lại dữ liệu 194 vụ việc gốc (2025 & 2026)"
-              >
-                <RefreshCw className="w-3 h-3" />
-                <span>Khôi Phục Dữ Liệu Gốc</span>
-              </button>
+              <div className="flex items-center gap-2 ml-auto">
+                <button
+                  onClick={handleSyncAllToFirebase}
+                  className="flex items-center gap-1 bg-amber-600 hover:bg-amber-500 text-white font-extrabold px-3 py-1 rounded-lg text-[11px] transition shadow-sm"
+                  title="Đẩy và đồng bộ tất cả bản ghi hiện tại lên Google Firebase Cloud"
+                >
+                  <Sparkles className="w-3 h-3 text-amber-200" />
+                  <span>🔥 Nạp & Đồng Bộ Cloud Firebase</span>
+                </button>
+
+                <button
+                  onClick={handleResetToInitialData}
+                  className="flex items-center gap-1 bg-emerald-700 hover:bg-emerald-600 text-white font-extrabold px-3 py-1 rounded-lg text-[11px] transition shadow-sm"
+                  title="Khôi phục lại dữ liệu 194 vụ việc gốc (2025 & 2026)"
+                >
+                  <RefreshCw className="w-3 h-3" />
+                  <span>Khôi Phục Dữ Liệu Gốc</span>
+                </button>
+              </div>
             </div>
           )}
 
