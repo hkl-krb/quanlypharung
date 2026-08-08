@@ -156,12 +156,12 @@ export default function AnalyticsDashboard({ data, theme = 'light' }) {
           <div className={`p-4 rounded-xl border ${isLight ? 'bg-white border-slate-200' : 'bg-slate-900/80 border-slate-800'}`}>
             <div className="text-xs font-bold text-slate-500 uppercase">Xác định đối tượng</div>
             <div className="flex items-baseline gap-2 mt-1">
-              <span className="text-2xl font-black text-purple-600">4 tên</span>
+              <span className="text-2xl font-black text-purple-600">4 đối tượng</span>
               <span className="text-xs text-slate-500 font-semibold">(2026)</span>
             </div>
             <div className="text-xs text-slate-600 dark:text-slate-400 mt-1 flex items-center gap-1">
               <ArrowUpRight className="w-3.5 h-3.5 text-purple-500" />
-              <span>Năm 2025: <strong>2 tên</strong> (Tăng 100%)</span>
+              <span>Năm 2025: <strong>2 đối tượng</strong> (Tăng 100%)</span>
             </div>
           </div>
 

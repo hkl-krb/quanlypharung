@@ -87,7 +87,7 @@ export default function FilterBar({
             onChange={(e) => setSelectedYear && setSelectedYear(Number(e.target.value))}
             className={`w-full text-xs font-bold rounded-xl px-2.5 py-2.5 transition focus:outline-none focus:ring-2 focus:ring-emerald-600 ${
               isLight 
-                ? 'bg-slate-50 border border-slate-300 text-slate-950' 
+                ? 'bg-blue-50/50 border border-blue-200 text-blue-950' 
                 : 'bg-slate-900 border border-slate-700 text-white'
             }`}
           >
@@ -110,7 +110,7 @@ export default function FilterBar({
             placeholder="Tìm số BB, tiểu khu, tên đối tượng..."
             className={`w-full text-xs font-bold rounded-xl pl-9 pr-3 py-2.5 transition focus:outline-none focus:ring-2 focus:ring-emerald-600 ${
               isLight 
-                ? 'bg-slate-50 border border-slate-300 text-slate-950 placeholder-slate-500' 
+                ? 'bg-slate-50/50 border border-slate-300 text-slate-950 placeholder-slate-400' 
                 : 'bg-slate-900 border border-slate-700 text-white placeholder-slate-400'
             }`}
           />
@@ -130,7 +130,7 @@ export default function FilterBar({
             }}
             className={`w-full text-xs font-bold rounded-xl px-3 py-2.5 transition focus:outline-none focus:ring-2 focus:ring-emerald-600 ${
               isLight 
-                ? 'bg-slate-50 border border-slate-300 text-slate-950' 
+                ? 'bg-emerald-50/50 border border-emerald-200 text-emerald-950' 
                 : 'bg-slate-900 border border-slate-700 text-white'
             }`}
           >
@@ -156,8 +156,8 @@ export default function FilterBar({
             }}
             className={`w-full text-xs font-bold rounded-xl px-3 py-2.5 transition focus:outline-none focus:ring-2 focus:ring-emerald-600 ${
               isLight 
-                ? 'bg-slate-50 border border-slate-300 text-slate-950' 
-                : 'bg-slate-900 border border-slate-700 text-white'
+                ? 'bg-amber-50/50 border border-amber-200 text-amber-950 focus:ring-amber-600' 
+                : 'bg-slate-900 border border-slate-700 text-white focus:ring-amber-600'
             }`}
           >
             {QUARTER_OPTIONS.map(opt => (
@@ -179,8 +179,8 @@ export default function FilterBar({
             onChange={(e) => setSelectedCommune(e.target.value)}
             className={`w-full text-xs font-bold rounded-xl px-3 py-2.5 transition focus:outline-none focus:ring-2 focus:ring-emerald-600 ${
               isLight 
-                ? 'bg-slate-50 border border-slate-300 text-slate-950' 
-                : 'bg-slate-900 border border-slate-700 text-white'
+                ? 'bg-sky-50/50 border border-sky-200 text-sky-950 focus:ring-sky-600' 
+                : 'bg-slate-900 border border-slate-700 text-white focus:ring-sky-600'
             }`}
           >
             {COMMUNE_OPTIONS.map(commune => (
@@ -202,7 +202,7 @@ export default function FilterBar({
             onChange={(e) => setSelectedViolatorFilter(e.target.value)}
             className={`w-full text-xs font-bold rounded-xl px-3 py-2.5 transition focus:outline-none focus:ring-2 focus:ring-purple-600 ${
               isLight 
-                ? 'bg-slate-50 border border-slate-300 text-slate-950 font-bold' 
+                ? 'bg-purple-50/50 border border-purple-200 text-purple-950 font-bold' 
                 : 'bg-slate-900 border border-slate-700 text-white font-bold'
             }`}
           >
