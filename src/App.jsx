@@ -429,7 +429,7 @@ export default function App() {
         theme={theme}
         onToggleTheme={toggleTheme}
         onLogout={handleLogout}
-        onOpenUserManagement={() => setIsUserManagementOpen(false)}
+        onOpenUserManagement={() => setIsUserManagementOpen(true)}
         onOpenAddModal={handleOpenAddModal}
         onExportExcel={() => exportToExcel(filteredData)}
         onImportExcel={handleImportExcel}
@@ -445,7 +445,12 @@ export default function App() {
       <div className="flex-1 flex flex-col md:flex-row max-w-[1700px] w-full mx-auto">
         
         {/* Navigation Sidebar */}
-        <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} theme={theme} />
+        <Sidebar 
+          activeTab={activeTab} 
+          setActiveTab={setActiveTab} 
+          onOpenUserManagement={() => setIsUserManagementOpen(true)}
+          theme={theme} 
+        />
 
         {/* Content Area */}
         <main className="flex-1 p-4 lg:p-8 overflow-y-auto">
