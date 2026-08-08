@@ -5,13 +5,10 @@ import {
   PlusCircle, 
   Printer, 
   Upload, 
-  ShieldAlert,
-  BarChart3,
   LogOut,
   Users,
   Sun,
-  Moon,
-  Sparkles
+  Moon
 } from 'lucide-react';
 
 export default function Header({ 
@@ -27,96 +24,91 @@ export default function Header({
   totalRecords,
   totalArea,
   selectedYear = 2026,
-  setSelectedYear,
-  isFirebaseConnected = false
+  setSelectedYear
 }) {
-  const safeUser = currentUser || { fullName: 'Cán Bộ', title: 'Kiểm Lâm', roleName: 'Người Dùng', avatarBg: 'bg-emerald-600', permissions: { canEditIncident: true, canAddIncident: true, canExportExcel: true } };
+  const safeUser = currentUser || { 
+    fullName: 'Cán Bộ', 
+    title: 'Kiểm Lâm', 
+    roleName: 'Người Dùng', 
+    avatarBg: 'bg-emerald-600', 
+    permissions: { canEditIncident: true, canAddIncident: true, canExportExcel: true } 
+  };
   const permissions = safeUser?.permissions || {};
   const isLight = theme === 'light';
 
   return (
-    <header className={`sticky top-0 z-30 px-4 lg:px-8 py-3.5 border-b transition-colors duration-200 ${
+    <header className={`sticky top-0 z-30 px-4 lg:px-8 py-3 border-b transition-colors duration-200 ${
       isLight 
-        ? 'bg-white/90 backdrop-blur-md border-slate-200/90 shadow-sm' 
-        : 'bg-slate-900/90 backdrop-blur-md border-slate-800 shadow-xl'
+        ? 'bg-white/95 backdrop-blur-md border-slate-200 shadow-sm' 
+        : 'bg-slate-900/95 backdrop-blur-md border-slate-800 shadow-xl'
     }`}>
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="max-w-[1700px] mx-auto flex flex-col xl:flex-row items-center justify-between gap-4">
         
-        {/* Logo & Year Switcher */}
-        <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
-          <div className="flex items-center gap-2.5">
-            <div className={`p-2 rounded-2xl ${
-              isLight ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30' : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+        {/* Brand & Main Title Header */}
+        <div className="flex items-center gap-3 w-full xl:w-auto justify-between xl:justify-start">
+          <div className="flex items-center gap-3">
+            <div className={`p-2.5 rounded-2xl shadow-md ${
+              isLight ? 'bg-gradient-to-tr from-emerald-700 to-teal-600 text-white shadow-emerald-700/20' : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
             }`}>
               <TreePine className="w-6 h-6" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className={`text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-md ${
-                  isLight ? 'bg-emerald-100 text-emerald-800' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md ${
+                  isLight ? 'bg-emerald-100 text-emerald-900 border border-emerald-200' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
                 }`}>
-                  Hạt Kiểm Lâm Krông Bông
-                </span>
-                
-                {/* Firebase Connection Status Badge */}
-                <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border flex items-center gap-1 ${
-                  isFirebaseConnected 
-                    ? 'bg-amber-500/15 text-amber-600 border-amber-500/30 dark:text-amber-400' 
-                    : 'bg-slate-100 text-slate-500 border-slate-200 dark:bg-slate-800 dark:text-slate-400'
-                }`} title={isFirebaseConnected ? "Đã kết nối Firebase Cloud Realtime Sync" : "Đang kết nối Cloud..."}>
-                  <span className={`w-2 h-2 rounded-full ${isFirebaseConnected ? 'bg-amber-500 animate-pulse' : 'bg-slate-400'}`}></span>
-                  <span>{isFirebaseConnected ? '🔥 Firebase Cloud Sync' : 'Offline'}</span>
+                  HẠT KIỂM LÂM KHU VỰC KRÔNG BÔNG
                 </span>
               </div>
-              
-              {/* Year Switcher Button Group */}
-              {setSelectedYear && (
-                <div className={`flex items-center p-0.5 rounded-xl border ${
-                  isLight ? 'bg-slate-100 border-slate-300' : 'bg-slate-800 border-slate-700'
-                }`}>
-                  <button
-                    onClick={() => setSelectedYear(2026)}
-                    className={`px-2.5 py-0.5 rounded-lg text-xs font-extrabold transition ${
-                      selectedYear === 2026 
-                        ? 'bg-emerald-700 text-white shadow-sm' 
-                        : isLight ? 'text-slate-700 hover:text-emerald-800' : 'text-slate-300 hover:text-emerald-400'
-                    }`}
-                  >
-                    Năm 2026 (41 vụ)
-                  </button>
-                  <button
-                    onClick={() => setSelectedYear(2025)}
-                    className={`px-2.5 py-0.5 rounded-lg text-xs font-extrabold transition ${
-                      selectedYear === 2025 
-                        ? 'bg-emerald-700 text-white shadow-sm' 
-                        : isLight ? 'text-slate-700 hover:text-emerald-800' : 'text-slate-300 hover:text-emerald-400'
-                    }`}
-                  >
-                    Năm 2025 (153 vụ)
-                  </button>
-                  <button
-                    onClick={() => setSelectedYear(0)}
-                    className={`px-2.5 py-0.5 rounded-lg text-xs font-extrabold transition ${
-                      selectedYear === 0 
-                        ? 'bg-blue-700 text-white shadow-sm' 
-                        : isLight ? 'text-slate-700 hover:text-blue-800' : 'text-slate-300 hover:text-blue-400'
-                    }`}
-                  >
-                    Tất cả các năm (194 vụ)
-                  </button>
-                </div>
-              )}
+              <h1 className={`text-base sm:text-lg font-black tracking-tight mt-0.5 ${
+                isLight ? 'text-slate-900' : 'text-white'
+              }`}>
+                Hệ Thống Quản Lý & Báo Cáo Phá Rừng
+              </h1>
             </div>
-            <h1 className={`text-xl font-extrabold tracking-tight flex items-center gap-2 mt-0.5 ${
-              isLight ? 'text-slate-900' : 'text-white'
-            }`}>
-              Hệ Thống Quản Lý & Báo Cáo Phá Rừng {selectedYear === 0 ? 'Tổng Hợp Multi-Year' : `Năm ${selectedYear}`}
-            </h1>
           </div>
+
+          {/* Year Switcher (Mobile/Desktop Segmented Controls) */}
+          {setSelectedYear && (
+            <div className={`flex items-center p-1 rounded-2xl border shadow-inner ${
+              isLight ? 'bg-slate-100 border-slate-200' : 'bg-slate-950 border-slate-800'
+            }`}>
+              <button
+                onClick={() => setSelectedYear(2026)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all ${
+                  selectedYear === 2026 
+                    ? 'bg-emerald-700 text-white shadow-md' 
+                    : isLight ? 'text-slate-600 hover:text-emerald-800' : 'text-slate-400 hover:text-emerald-400'
+                }`}
+              >
+                Năm 2026 (41 vụ)
+              </button>
+              <button
+                onClick={() => setSelectedYear(2025)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all ${
+                  selectedYear === 2025 
+                    ? 'bg-emerald-700 text-white shadow-md' 
+                    : isLight ? 'text-slate-600 hover:text-emerald-800' : 'text-slate-400 hover:text-emerald-400'
+                }`}
+              >
+                Năm 2025 (153 vụ)
+              </button>
+              <button
+                onClick={() => setSelectedYear(0)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all ${
+                  selectedYear === 0 
+                    ? 'bg-teal-700 text-white shadow-md' 
+                    : isLight ? 'text-slate-600 hover:text-teal-800' : 'text-slate-400 hover:text-teal-400'
+                }`}
+              >
+                Tất cả (194 vụ)
+              </button>
+            </div>
+          )}
         </div>
 
-        {/* User Info & Actions */}
-        <div className="flex items-center flex-wrap gap-2.5">
+        {/* User Info & Action Toolbar */}
+        <div className="flex items-center flex-wrap gap-2.5 w-full xl:w-auto justify-end">
           
           {/* Theme Toggle Button */}
           <button
@@ -243,7 +235,6 @@ export default function Header({
           </div>
 
         </div>
-
       </div>
     </header>
   );

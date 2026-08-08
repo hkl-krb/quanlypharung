@@ -618,25 +618,34 @@ export default function App() {
 
       </div>
 
-      {/* Official Compact Footer */}
-      <footer className={`border-t py-3.5 px-4 text-center mt-auto transition-colors duration-200 ${
+      {/* Official Compact Footer with Firebase Cloud Badge */}
+      <footer className={`border-t py-3 px-4 mt-auto transition-colors duration-200 ${
         isLight 
           ? 'bg-slate-50/90 border-slate-200/80 text-slate-600' 
           : 'bg-slate-950/90 border-slate-800 text-slate-400'
       }`}>
-        <div className="max-w-7xl mx-auto flex flex-col items-center justify-center gap-1">
+        <div className="max-w-[1700px] mx-auto flex flex-col md:flex-row items-center justify-between gap-2 text-xs">
           
-          {/* Line 1: Copyright 2026 */}
-          <div className="flex items-center justify-center gap-2 text-xs sm:text-sm font-extrabold text-emerald-800 dark:text-emerald-400 tracking-wide">
+          {/* Left: Copyright 2026 */}
+          <div className="flex items-center gap-2 font-extrabold text-emerald-800 dark:text-emerald-400 tracking-wide">
             <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-sm inline-block animate-pulse shrink-0"></span>
             <span>Copyright © 2026 Bản quyền thuộc về Hạt Kiểm lâm khu vực Krông Bông</span>
           </div>
 
-          {/* Line 2: Usage Notice */}
-          <div className={`text-[11px] sm:text-xs font-semibold tracking-normal ${
-            isLight ? 'text-slate-600' : 'text-slate-400'
-          }`}>
-            Hệ thống lưu trữ & quản lý sử dụng nội bộ.
+          {/* Right: Usage Notice & Firebase Sync Status Badge */}
+          <div className="flex items-center gap-3 flex-wrap justify-center">
+            <span className="font-semibold text-slate-500 dark:text-slate-400 text-[11px]">
+              Hệ thống lưu trữ & quản lý sử dụng nội bộ.
+            </span>
+
+            <span className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border flex items-center gap-1.5 transition ${
+              isFirebaseConnected 
+                ? 'bg-amber-500/10 text-amber-600 border-amber-500/30 dark:text-amber-400' 
+                : 'bg-slate-100 text-slate-500 border-slate-200 dark:bg-slate-800 dark:text-slate-400'
+            }`} title={isFirebaseConnected ? "Đã kết nối Firebase Cloud Realtime Sync" : "Đang kết nối Cloud..."}>
+              <span className={`w-1.5 h-1.5 rounded-full ${isFirebaseConnected ? 'bg-amber-500 animate-pulse' : 'bg-slate-400'}`}></span>
+              <span>{isFirebaseConnected ? '🔥 Firebase Cloud Sync' : 'Offline'}</span>
+            </span>
           </div>
 
         </div>
