@@ -68,7 +68,7 @@ export default function PredictiveAnalyticsPanel({ data, theme = 'light' }) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           
           {/* Top 1: Commune */}
-          <div className="glass-panel rounded-2xl p-5 flex flex-col justify-between">
+          <div className="bg-gradient-to-b from-amber-50/80 to-white dark:from-amber-950/20 dark:to-slate-900 border border-amber-200/60 dark:border-amber-900/50 shadow-md rounded-2xl p-5 flex flex-col justify-between transition-transform hover:-translate-y-1 duration-300">
             <div>
               <div className={`flex items-center justify-between mb-3 pb-2 border-b ${isLight ? 'border-slate-300' : 'border-slate-800'}`}>
                 <span className="text-xs font-extrabold text-amber-700 uppercase tracking-wider flex items-center gap-1.5">
@@ -83,8 +83,8 @@ export default function PredictiveAnalyticsPanel({ data, theme = 'light' }) {
               </div>
 
               {analysis.topCommunes.slice(0, 3).map((commune, idx) => (
-                <div key={idx} className={`p-3 rounded-xl border mb-2.5 transition ${
-                  isLight ? 'bg-slate-50 border-slate-300' : 'bg-slate-950/70 border-slate-800'
+                <div key={idx} className={`p-3 rounded-xl border mb-2.5 shadow-sm transition hover:shadow-md ${
+                  isLight ? 'bg-white border-amber-100' : 'bg-slate-900/50 border-amber-900/30'
                 }`}>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -112,7 +112,7 @@ export default function PredictiveAnalyticsPanel({ data, theme = 'light' }) {
           </div>
 
           {/* Top 2: Sub-area */}
-          <div className="glass-panel rounded-2xl p-5 flex flex-col justify-between">
+          <div className="bg-gradient-to-b from-rose-50/80 to-white dark:from-rose-950/20 dark:to-slate-900 border border-rose-200/60 dark:border-rose-900/50 shadow-md rounded-2xl p-5 flex flex-col justify-between transition-transform hover:-translate-y-1 duration-300">
             <div>
               <div className={`flex items-center justify-between mb-3 pb-2 border-b ${isLight ? 'border-slate-300' : 'border-slate-800'}`}>
                 <span className="text-xs font-extrabold text-rose-700 uppercase tracking-wider flex items-center gap-1.5">
@@ -127,8 +127,8 @@ export default function PredictiveAnalyticsPanel({ data, theme = 'light' }) {
               </div>
 
               {analysis.topTieuKhus.slice(0, 3).map((tk, idx) => (
-                <div key={idx} className={`p-3 rounded-xl border mb-2.5 transition ${
-                  isLight ? 'bg-slate-50 border-slate-300' : 'bg-slate-950/70 border-slate-800'
+                <div key={idx} className={`p-3 rounded-xl border mb-2.5 shadow-sm transition hover:shadow-md ${
+                  isLight ? 'bg-white border-rose-100' : 'bg-slate-900/50 border-rose-900/30'
                 }`}>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -157,7 +157,7 @@ export default function PredictiveAnalyticsPanel({ data, theme = 'light' }) {
           </div>
 
           {/* Top 3: Plot */}
-          <div className="glass-panel rounded-2xl p-5 flex flex-col justify-between">
+          <div className="bg-gradient-to-b from-teal-50/80 to-white dark:from-teal-950/20 dark:to-slate-900 border border-teal-200/60 dark:border-teal-900/50 shadow-md rounded-2xl p-5 flex flex-col justify-between transition-transform hover:-translate-y-1 duration-300">
             <div>
               <div className={`flex items-center justify-between mb-3 pb-2 border-b ${isLight ? 'border-slate-300' : 'border-slate-800'}`}>
                 <span className="text-xs font-extrabold text-teal-700 uppercase tracking-wider flex items-center gap-1.5">
@@ -172,8 +172,8 @@ export default function PredictiveAnalyticsPanel({ data, theme = 'light' }) {
               </div>
 
               {analysis.topKhoanhs.slice(0, 3).map((khoanh, idx) => (
-                <div key={idx} className={`p-3 rounded-xl border mb-2.5 transition ${
-                  isLight ? 'bg-slate-50 border-slate-300' : 'bg-slate-950/70 border-slate-800'
+                <div key={idx} className={`p-3 rounded-xl border mb-2.5 shadow-sm transition hover:shadow-md ${
+                  isLight ? 'bg-white border-teal-100' : 'bg-slate-900/50 border-teal-900/30'
                 }`}>
                   <div className="flex items-center justify-between">
                     <span className={`font-mono font-extrabold text-xs truncate max-w-[170px] ${isLight ? 'text-slate-900' : 'text-white'}`} title={khoanh.name}>

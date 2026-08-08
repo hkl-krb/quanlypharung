@@ -1,0 +1,20 @@
+{
+  "short_name": "Kiểm Lâm",
+  "name": "Hệ Thống Quản Lý Phá Rừng",
+  "icons": [
+    {
+      "src": "logo_kiemlam.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "logo_kiemlam.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#064e3b",
+  "background_color": "#0f172a"
+}
