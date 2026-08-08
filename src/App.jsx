@@ -25,7 +25,8 @@ import {
   seedInitialIncidents, 
   subscribeToUsers, 
   saveUserToFirebase, 
-  deleteUserFromFirebase 
+  deleteUserFromFirebase,
+  seedInitialUsers
 } from './services/firebaseService';
 
 const ALL_INITIAL_DATA = [...INITIAL_DEFORESTATION_DATA_2026, ...INITIAL_DEFORESTATION_DATA_2025];
@@ -150,8 +151,9 @@ export default function App() {
     try {
       showToast('⏳ Đang đẩy dữ liệu lên Firebase Cloud...', 'warning');
       await seedInitialIncidents(data);
+      await seedInitialUsers(usersList);
       setIsFirebaseConnected(true);
-      showToast(`🔥 Đã đồng bộ thành công ${data.length} vụ việc lên Google Firebase Cloud!`);
+      showToast(`🔥 Đã đồng bộ thành công dữ liệu và danh sách tài khoản lên Google Firebase Cloud!`);
     } catch (err) {
       console.error('Lỗi nạp Firebase:', err);
       if (err?.code === 'permission-denied' || err?.message?.includes('permission')) {
