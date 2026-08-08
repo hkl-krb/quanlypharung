@@ -92,21 +92,35 @@ export default function Sidebar({ activeTab, setActiveTab, onOpenUserManagement,
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`flex items-center justify-between p-3 rounded-2xl transition text-left shrink-0 md:w-full group ${
+                className={`flex items-center justify-between p-3 rounded-2xl transition-all duration-200 text-left shrink-0 md:w-full group relative ${
                   isActive
-                    ? 'bg-gradient-to-r from-emerald-800 to-teal-800 text-white shadow-lg font-extrabold'
+                    ? 'bg-gradient-to-r from-emerald-800 to-teal-800 text-white shadow-lg font-extrabold border border-transparent'
                     : isLight 
-                    ? 'text-slate-800 hover:text-slate-950 hover:bg-slate-100 font-bold' 
-                    : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
+                    ? 'sidebar-menu-inactive text-slate-800 hover:text-slate-950 hover:bg-slate-50/80 font-bold border border-slate-200 hover:border-emerald-300 hover:shadow-md' 
+                    : 'sidebar-menu-inactive text-slate-300 hover:text-white hover:bg-slate-800/80 border border-slate-700/50 hover:border-emerald-600/50'
                 }`}
+                style={!isActive ? {
+                  background: isLight
+                    ? 'linear-gradient(145deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.9) 100%)'
+                    : 'linear-gradient(145deg, rgba(30,41,59,0.6) 0%, rgba(15,23,42,0.5) 100%)',
+                } : {}}
               >
+                {/* Subtle animated border shimmer for inactive items */}
+                {!isActive && (
+                  <span className={`absolute inset-0 rounded-2xl pointer-events-none overflow-hidden`}>
+                    <span className={`absolute inset-0 rounded-2xl border ${
+                      isLight ? 'border-slate-200/70' : 'border-slate-700/40'
+                    }`} />
+                  </span>
+                )}
+
                 <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-xl transition ${
+                  <div className={`p-2 rounded-xl transition-all duration-200 ${
                     isActive 
-                      ? 'bg-amber-400 text-slate-950 font-bold' 
+                      ? 'bg-amber-400 text-slate-950 font-bold shadow-sm' 
                       : isLight 
-                      ? 'bg-slate-100 text-emerald-800 group-hover:bg-slate-200' 
-                      : 'bg-slate-800 text-emerald-400 group-hover:text-emerald-300'
+                      ? 'bg-slate-100 text-emerald-800 group-hover:bg-emerald-50 group-hover:text-emerald-700 group-hover:shadow-sm' 
+                      : 'bg-slate-800/80 text-emerald-400 group-hover:text-emerald-300 group-hover:bg-slate-700/80'
                   }`}>
                     <Icon className="w-4 h-4" />
                   </div>
@@ -137,7 +151,7 @@ export default function Sidebar({ activeTab, setActiveTab, onOpenUserManagement,
           <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800">
             <button
               onClick={onOpenUserManagement}
-              className="w-full flex items-center gap-2.5 p-3 rounded-2xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-500/30 font-extrabold text-xs transition shadow-sm"
+              className="w-full flex items-center gap-2.5 p-3 rounded-2xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-300/60 hover:border-purple-400/80 font-extrabold text-xs transition-all duration-200 shadow-sm hover:shadow-md"
             >
               <Users className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" />
               <div className="text-left">
@@ -206,14 +220,15 @@ export default function Sidebar({ activeTab, setActiveTab, onOpenUserManagement,
           </div>
 
           {/* Agency Details */}
-          <div className={`p-2.5 rounded-xl text-xs space-y-0.5 ${
+          <div className={`p-2.5 rounded-xl text-xs space-y-0.5 text-center ${
             isLight ? 'bg-slate-100 text-slate-700' : 'bg-slate-950/60 text-slate-300'
           }`}>
             <div className="font-extrabold text-emerald-800 dark:text-emerald-400">
-              Hạt Kiểm lâm khu vực Krông Bông
+              <div>Hạt Kiểm lâm khu vực</div>
+              <div>Krông Bông</div>
             </div>
             <div className="text-[11px] text-slate-500 dark:text-slate-400">
-              Đô thị Krông Kmar, Huyện Krông Bông, Tỉnh Đắk Lắk
+              Địa chỉ: xã Krông Bông, Tỉnh Đắk Lắk
             </div>
           </div>
         </div>

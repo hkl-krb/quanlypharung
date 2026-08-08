@@ -105,3 +105,60 @@
     color: #000000 !important;
   }
 }
+
+/* =============================================
+   Sidebar Menu – Animated Border Effects
+   Hiệu ứng viền chạy cho các mục menu chưa chọn
+   ============================================= */
+
+@keyframes menu-border-pulse {
+  0%, 100% { box-shadow: 0 0 0 0px rgba(16,185,129,0), inset 0 1px 0 rgba(255,255,255,0.9), 0 1px 3px rgba(0,0,0,0.06); }
+  50%       { box-shadow: 0 0 0 2px rgba(16,185,129,0.09), inset 0 1px 0 rgba(255,255,255,0.9), 0 2px 6px rgba(0,0,0,0.08); }
+}
+
+@keyframes menu-border-pulse-dark {
+  0%, 100% { box-shadow: 0 0 0 0px rgba(16,185,129,0), inset 0 1px 0 rgba(255,255,255,0.04), 0 1px 4px rgba(0,0,0,0.3); }
+  50%       { box-shadow: 0 0 0 2px rgba(16,185,129,0.07), inset 0 1px 0 rgba(255,255,255,0.04), 0 2px 8px rgba(0,0,0,0.35); }
+}
+
+@keyframes shimmer-sweep {
+  0%   { transform: translateX(-120%) skewX(-12deg); }
+  100% { transform: translateX(220%) skewX(-12deg); }
+}
+
+.sidebar-menu-inactive {
+  animation: menu-border-pulse 3.5s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+.sidebar-menu-inactive::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 35%; height: 100%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.2) 50%, transparent 100%);
+  animation: shimmer-sweep 4s ease-in-out infinite;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.theme-dark .sidebar-menu-inactive {
+  animation: menu-border-pulse-dark 3.5s ease-in-out infinite;
+}
+
+.theme-dark .sidebar-menu-inactive::after {
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%);
+}
+
+.sidebar-menu-inactive:nth-child(1)       { animation-delay: 0s; }
+.sidebar-menu-inactive:nth-child(1)::after { animation-delay: 0s; }
+.sidebar-menu-inactive:nth-child(2)       { animation-delay: 0.8s; }
+.sidebar-menu-inactive:nth-child(2)::after { animation-delay: 0.8s; }
+.sidebar-menu-inactive:nth-child(3)       { animation-delay: 1.6s; }
+.sidebar-menu-inactive:nth-child(3)::after { animation-delay: 1.6s; }
+.sidebar-menu-inactive:nth-child(4)       { animation-delay: 2.4s; }
+.sidebar-menu-inactive:nth-child(4)::after { animation-delay: 2.4s; }
+.sidebar-menu-inactive:nth-child(5)       { animation-delay: 3.2s; }
+.sidebar-menu-inactive:nth-child(5)::after { animation-delay: 3.2s; }
+

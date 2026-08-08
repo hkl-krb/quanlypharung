@@ -167,16 +167,6 @@ export default function PrintableReport({ data, onExportExcel, onBack }) {
           </div>
         </div>
 
-        {/* Copyright notice on document */}
-        <div className="mt-8 pt-4 border-t border-slate-300 text-center space-y-1">
-          <div className="text-xs sm:text-sm font-extrabold text-black uppercase tracking-wide">
-            Copyright: Bản quyền thuộc về Hạt Kiểm lâm khu vực Krông Bông
-          </div>
-          <div className="text-xs font-semibold text-slate-700">
-            Hệ thống quản lý sử dụng nội bộ.
-          </div>
-        </div>
-
       </div>
     </div>
   );

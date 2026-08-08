@@ -58,7 +58,7 @@ export const DEMO_USERS = [
     username: 'kiemlam',
     password: '123',
     fullName: 'Trần Quốc Tuấn',
-    title: 'Cán Bộ Kiểm Lâm Địa Bàn',
+    title: 'Bộ Phận Xử Lý Vi Phạm',
     role: ROLES.STAFF,
     roleName: 'Cán Bộ Nhập Liệu',
     avatarBg: 'bg-sky-600',

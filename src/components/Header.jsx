@@ -10,6 +10,7 @@ import {
   Sun,
   Moon
 } from 'lucide-react';
+import logoKiemLam from '../assets/logo_kiemlam.png';
 
 export default function Header({ 
   currentUser,
@@ -47,10 +48,14 @@ export default function Header({
         {/* Brand & Main Title Header */}
         <div className="flex items-center gap-3 w-full xl:w-auto justify-between xl:justify-start">
           <div className="flex items-center gap-3">
-            <div className={`p-2.5 rounded-2xl shadow-md ${
-              isLight ? 'bg-gradient-to-tr from-emerald-700 to-teal-600 text-white shadow-emerald-700/20' : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-            }`}>
-              <TreePine className="w-6 h-6" />
+            
+            {/* Logo Hạt Kiểm Lâm (Hình tròn, Lớn hơn 40%, Nền trắng nổi bật) */}
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-white shadow-xl border-2 border-emerald-600/40 p-1.5 flex items-center justify-center ring-4 ring-emerald-500/15 shrink-0 overflow-hidden transition-transform hover:scale-105">
+              <img 
+                src={logoKiemLam} 
+                alt="Phù hiệu Hạt Kiểm Lâm Khu Vực Krông Bông" 
+                className="w-full h-full object-contain filter drop-shadow-md scale-110"
+              />
             </div>
             <div>
               <div className="flex items-center gap-2">

@@ -83,7 +83,7 @@ export default function UserManagementModal({
     setIsAddingNew(true);
     setFormData({
       fullName: '',
-      title: 'Cán Bộ Kiểm Lâm Địa Bàn',
+      title: 'Bộ Phận Xử Lý Vi Phạm',
       username: `kiemlam_${Math.floor(Math.random() * 89 + 10)}`,
       password: '123',
       role: ROLES.STAFF,
@@ -299,20 +299,13 @@ export default function UserManagementModal({
         {/* Content Body */}
         <div className="p-5 space-y-4 max-h-[75vh] overflow-y-auto">
           
-          {/* Non-Admin Notice Banner */}
+          {/* Read-Only Notice Banner for Non-Admins */}
           {!isAdmin && (
             <div className="p-3.5 rounded-xl bg-amber-950/40 border border-amber-800/60 text-amber-200 text-xs flex items-center justify-between flex-wrap gap-3">
               <div className="flex items-center gap-2">
                 <Lock className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>Bạn đang xem danh sách với vai trò <strong>{currentUser?.roleName || 'Người dùng'}</strong>. Để sửa thông tin thành viên khác, hãy chuyển sang tài khoản Admin.</span>
+                <span>Bạn đang xem danh sách nhân sự với vai trò <strong>{currentUser?.roleName || 'Người dùng'}</strong>. Chỉ tài khoản <strong>Quản trị viên hệ thống (Admin)</strong> mới có quyền thêm mới, sửa đổi thông tin hoặc phân quyền thành viên.</span>
               </div>
-              <button
-                onClick={handleQuickSwitchToAdmin}
-                className="flex items-center gap-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-3 py-1 rounded-lg text-xs transition shadow"
-              >
-                <Zap className="w-3.5 h-3.5 fill-slate-950" />
-                <span>Chuyển Sang Admin Ngay</span>
-              </button>
             </div>
           )}
 
@@ -324,7 +317,7 @@ export default function UserManagementModal({
             </div>
           )}
 
-          {/* EDIT FORM or ADD FORM */}
+          {/* EDIT FORM or ADD FORM (Admin only) */}
           {(editingUser || isAddingNew) && isAdmin ? (
             <form onSubmit={handleFormSubmit} className="p-4 rounded-2xl bg-slate-950 border border-purple-800/50 space-y-4 shadow-xl">
               <div className="flex items-center justify-between pb-3 border-b border-slate-800">
@@ -517,10 +510,18 @@ export default function UserManagementModal({
               </div>
             </form>
           ) : (
-            /* USER LIST DISPLAY */
+            /* USER LIST DISPLAY (Filtered by security level) */
             <div className="space-y-3">
-              {usersList.map((user) => {
-                const isCurrent = currentUser?.id === user.id;
+              {usersList
+                .filter(user => {
+                  // Hide Quản Trị Viên Hệ Thống (Admin) from Leaders and Staff
+                  if (!isAdmin) {
+                    return user.role !== ROLES.ADMIN && user.username !== 'admin';
+                  }
+                  return true;
+                })
+                .map((user) => {
+                  const isCurrent = currentUser?.id === user.id;
 
                 return (
                   <div 

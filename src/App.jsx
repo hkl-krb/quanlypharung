@@ -77,13 +77,14 @@ export default function App() {
   const [usersList, setUsersList] = useState(() => {
     try {
       const saved = localStorage.getItem('krongbong_users_v3');
+      let users = DEMO_USERS;
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0 && parsed.every(u => u && typeof u === 'object')) {
-          return parsed.filter(Boolean);
+          users = parsed.filter(Boolean);
         }
       }
-      return DEMO_USERS;
+      return users.map(u => u.title === 'Cán Bộ Kiểm Lâm Địa Bàn' ? { ...u, title: 'Bộ Phận Xử Lý Vi Phạm' } : u);
     } catch (e) {
       return DEMO_USERS;
     }
@@ -116,7 +117,21 @@ export default function App() {
     const unsubUsers = subscribeToUsers(
       (realtimeUsers) => {
         if (Array.isArray(realtimeUsers) && realtimeUsers.length > 0) {
-          setUsersList(realtimeUsers);
+          setUsersList(prev => {
+            const mergedMap = new Map();
+            realtimeUsers.forEach(u => mergedMap.set(String(u.id || u.username), u));
+            if (Array.isArray(prev)) {
+              prev.forEach(u => {
+                const key = String(u.id || u.username);
+                mergedMap.set(key, { ...(mergedMap.get(key) || {}), ...u });
+              });
+            }
+            const result = Array.from(mergedMap.values());
+            try {
+              localStorage.setItem('krongbong_users_v3', JSON.stringify(result));
+            } catch (e) {}
+            return result;
+          });
         }
       },
       (err) => {
@@ -212,21 +227,41 @@ export default function App() {
     showToast(`Đã chuyển sang tài khoản: ${user.fullName} (${user.roleName})`);
   };
 
-  // Admin User Management Handlers (Synced to Firebase)
+  // Admin User Management Handlers (Synced to LocalStorage & Firebase)
   const handleUpdateUser = (updatedUser) => {
-    setUsersList(prev => prev.map(u => u.id === updatedUser.id ? updatedUser : u));
-    if (currentUser?.id === updatedUser.id) {
+    setUsersList(prev => {
+      const newList = prev.map(u => (u.id === updatedUser.id || u.username === updatedUser.username) ? updatedUser : u);
+      try {
+        localStorage.setItem('krongbong_users_v3', JSON.stringify(newList));
+      } catch (e) {}
+      return newList;
+    });
+    if (currentUser?.id === updatedUser.id || currentUser?.username === updatedUser.username) {
       setCurrentUser(updatedUser);
     }
-    saveUserToFirebase(updatedUser);
-    showToast(`🔥 Đã lưu thay đổi tài khoản ${updatedUser.fullName} lên Google Cloud!`);
+    try {
+      saveUserToFirebase(updatedUser);
+    } catch (err) {
+      console.warn('Lỗi lưu tài khoản lên Firebase:', err);
+    }
+    showToast(`✅ Đã lưu thành công thông tin tài khoản ${updatedUser.fullName}!`);
   };
 
   const handleAddUser = (newUser) => {
     const userWithId = { ...newUser, id: Date.now() };
-    setUsersList(prev => [...prev, userWithId]);
-    saveUserToFirebase(userWithId);
-    showToast(`🔥 Đã tạo thành công tài khoản mới: ${newUser.fullName} trên Google Cloud!`);
+    setUsersList(prev => {
+      const newList = [...prev, userWithId];
+      try {
+        localStorage.setItem('krongbong_users_v3', JSON.stringify(newList));
+      } catch (e) {}
+      return newList;
+    });
+    try {
+      saveUserToFirebase(userWithId);
+    } catch (err) {
+      console.warn('Lỗi lưu tài khoản lên Firebase:', err);
+    }
+    showToast(`✅ Đã tạo mới thành công tài khoản: ${newUser.fullName}!`);
   };
 
   const handleDeleteUser = (userId) => {
@@ -236,9 +271,19 @@ export default function App() {
       showToast('Không thể xóa tài khoản Quản trị viên hệ thống cuối cùng!', 'error');
       return;
     }
-    setUsersList(prev => prev.filter(u => u.id !== userId));
-    deleteUserFromFirebase(userId);
-    showToast(`🔥 Đã xóa tài khoản ${user.fullName} khỏi Google Cloud!`);
+    setUsersList(prev => {
+      const newList = prev.filter(u => u.id !== userId);
+      try {
+        localStorage.setItem('krongbong_users_v3', JSON.stringify(newList));
+      } catch (e) {}
+      return newList;
+    });
+    try {
+      deleteUserFromFirebase(userId);
+    } catch (err) {
+      console.warn('Lỗi xóa tài khoản khỏi Firebase:', err);
+    }
+    showToast(`Đã xóa tài khoản ${user.fullName}!`, 'warning');
   };
 
   // Reset Filters
@@ -532,25 +577,28 @@ export default function App() {
                   Đang xem dữ liệu: <strong className="text-emerald-700 dark:text-emerald-400 uppercase">{selectedYear === 0 ? 'Tất cả các năm (194 vụ)' : `Năm ${selectedYear} (${filteredData.length} vụ)`}</strong>. Đã phân tách dữ liệu 2025 & 2026 độc lập theo chỉ đạo.
                 </span>
               </div>
-              <div className="flex items-center gap-2 ml-auto">
-                <button
-                  onClick={handleSyncAllToFirebase}
-                  className="flex items-center gap-1 bg-amber-600 hover:bg-amber-500 text-white font-extrabold px-3 py-1 rounded-lg text-[11px] transition shadow-sm"
-                  title="Đẩy và đồng bộ tất cả bản ghi hiện tại lên Google Firebase Cloud"
-                >
-                  <Sparkles className="w-3 h-3 text-amber-200" />
-                  <span>🔥 Nạp & Đồng Bộ Cloud Firebase</span>
-                </button>
+              {/* Render Admin-Only Data Reset & Sync Controls */}
+              {currentUser?.role === 'ADMIN' && (
+                <div className="flex items-center gap-2 ml-auto">
+                  <button
+                    onClick={handleSyncAllToFirebase}
+                    className="flex items-center gap-1 bg-amber-600 hover:bg-amber-500 text-white font-extrabold px-3 py-1 rounded-lg text-[11px] transition shadow-sm"
+                    title="Đẩy và đồng bộ tất cả bản ghi hiện tại lên Google Firebase Cloud"
+                  >
+                    <Sparkles className="w-3 h-3 text-amber-200" />
+                    <span>🔥 Nạp & Đồng Bộ Cloud Firebase</span>
+                  </button>
 
-                <button
-                  onClick={handleResetToInitialData}
-                  className="flex items-center gap-1 bg-emerald-700 hover:bg-emerald-600 text-white font-extrabold px-3 py-1 rounded-lg text-[11px] transition shadow-sm"
-                  title="Khôi phục lại dữ liệu 194 vụ việc gốc (2025 & 2026)"
-                >
-                  <RefreshCw className="w-3 h-3" />
-                  <span>Khôi Phục Dữ Liệu Gốc</span>
-                </button>
-              </div>
+                  <button
+                    onClick={handleResetToInitialData}
+                    className="flex items-center gap-1 bg-emerald-700 hover:bg-emerald-600 text-white font-extrabold px-3 py-1 rounded-lg text-[11px] transition shadow-sm"
+                    title="Khôi phục lại dữ liệu 194 vụ việc gốc (2025 & 2026)"
+                  >
+                    <RefreshCw className="w-3 h-3" />
+                    <span>Khôi Phục Dữ Liệu Gốc</span>
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
