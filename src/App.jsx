@@ -34,11 +34,19 @@ export default function App() {
     setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
   };
 
-  // Persistent Incident Data in localStorage (Supports 2026 & 2025 v8)
+  // Persistent Incident Data in localStorage (Forces 2026 & 2025 Full 194 Records v10)
   const [data, setData] = useState(() => {
     try {
-      const saved = localStorage.getItem('krongbong_incidents_v8');
-      return saved ? JSON.parse(saved) : ALL_INITIAL_DATA;
+      const saved = localStorage.getItem('krongbong_incidents_v10_full');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // Force upgrade if cached data is missing 2025 data (less than 150 records)
+        if (Array.isArray(parsed) && parsed.length >= 150 && parsed.some(d => d.nam === 2025)) {
+          return parsed;
+        }
+      }
+      localStorage.setItem('krongbong_incidents_v10_full', JSON.stringify(ALL_INITIAL_DATA));
+      return ALL_INITIAL_DATA;
     } catch (e) {
       return ALL_INITIAL_DATA;
     }
@@ -46,7 +54,7 @@ export default function App() {
 
   useEffect(() => {
     try {
-      localStorage.setItem('krongbong_incidents_v8', JSON.stringify(data));
+      localStorage.setItem('krongbong_incidents_v10_full', JSON.stringify(data));
     } catch (e) {
       console.error('Error saving incidents data to localStorage', e);
     }
@@ -54,9 +62,9 @@ export default function App() {
 
   // Force reset data function (Revert strictly to initial dataset)
   const handleResetToInitialData = () => {
-    if (window.confirm('Bạn có muốn đồng bộ lại toàn bộ dữ liệu gốc (Năm 2026: 41 vụ, Năm 2025: 153 vụ)?')) {
+    if (window.confirm('Bạn có muốn khôi phục và đồng bộ toàn bộ 194 vụ việc gốc (Năm 2026: 41 vụ, Năm 2025: 153 vụ)?')) {
       setData(ALL_INITIAL_DATA);
-      localStorage.setItem('krongbong_incidents_v8', JSON.stringify(ALL_INITIAL_DATA));
+      localStorage.setItem('krongbong_incidents_v10_full', JSON.stringify(ALL_INITIAL_DATA));
       showToast('Đã khôi phục hoàn toàn dữ liệu 194 vụ việc gốc (2025 & 2026)!');
     }
   };
