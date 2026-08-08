@@ -144,6 +144,23 @@ export default function App() {
     showToast(`Đã lưu thay đổi tài khoản ${updatedUser.fullName} vào cơ sở dữ liệu!`);
   };
 
+  const handleAddUser = (newUser) => {
+    const userWithId = { ...newUser, id: Date.now() };
+    setUsersList(prev => [...prev, userWithId]);
+    showToast(`Đã tạo thành công tài khoản mới: ${newUser.fullName}`);
+  };
+
+  const handleDeleteUser = (userId) => {
+    const user = usersList.find(u => u.id === userId);
+    if (!user) return;
+    if (user.username === 'admin' && usersList.filter(u => u.role === 'ADMIN').length <= 1) {
+      showToast('Không thể xóa tài khoản Quản trị viên hệ thống cuối cùng!', 'error');
+      return;
+    }
+    setUsersList(prev => prev.filter(u => u.id !== userId));
+    showToast(`Đã xóa thành công tài khoản: ${user.fullName}`);
+  };
+
   // Reset Filters
   const handleResetFilters = () => {
     setSelectedYear(2026);
@@ -519,6 +536,8 @@ export default function App() {
         currentUser={currentUser}
         usersList={usersList}
         onUpdateUser={handleUpdateUser}
+        onAddUser={handleAddUser}
+        onDeleteUser={handleDeleteUser}
         onSwitchUser={handleSwitchUser}
       />
 
