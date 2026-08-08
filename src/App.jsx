@@ -77,7 +77,7 @@ export default function App() {
   // Persistent Dynamic Users List State in localStorage & Firebase Sync
   const [usersList, setUsersList] = useState(() => {
     try {
-      const saved = localStorage.getItem('krongbong_users_v3');
+      const saved = localStorage.getItem('krongbong_users_v4');
       let users = DEMO_USERS;
       if (saved) {
         const parsed = JSON.parse(saved);
@@ -94,7 +94,7 @@ export default function App() {
   useEffect(() => {
     try {
       if (Array.isArray(usersList)) {
-        localStorage.setItem('krongbong_users_v3', JSON.stringify(usersList));
+        localStorage.setItem('krongbong_users_v4', JSON.stringify(usersList));
       }
     } catch (e) {
       console.error('Error saving users list to localStorage', e);
@@ -129,7 +129,7 @@ export default function App() {
             }
             const result = Array.from(mergedMap.values());
             try {
-              localStorage.setItem('krongbong_users_v3', JSON.stringify(result));
+              localStorage.setItem('krongbong_users_v4', JSON.stringify(result));
             } catch (e) {}
             return result;
           });
@@ -234,7 +234,7 @@ export default function App() {
     setUsersList(prev => {
       const newList = prev.map(u => (u.id === updatedUser.id || u.username === updatedUser.username) ? updatedUser : u);
       try {
-        localStorage.setItem('krongbong_users_v3', JSON.stringify(newList));
+        localStorage.setItem('krongbong_users_v4', JSON.stringify(newList));
       } catch (e) {}
       return newList;
     });
@@ -254,7 +254,7 @@ export default function App() {
     setUsersList(prev => {
       const newList = [...prev, userWithId];
       try {
-        localStorage.setItem('krongbong_users_v3', JSON.stringify(newList));
+        localStorage.setItem('krongbong_users_v4', JSON.stringify(newList));
       } catch (e) {}
       return newList;
     });
@@ -276,7 +276,7 @@ export default function App() {
     setUsersList(prev => {
       const newList = prev.filter(u => u.id !== userId);
       try {
-        localStorage.setItem('krongbong_users_v3', JSON.stringify(newList));
+        localStorage.setItem('krongbong_users_v4', JSON.stringify(newList));
       } catch (e) {}
       return newList;
     });
