@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, 
   TableProperties, 
@@ -6,13 +6,36 @@ import {
   FileText, 
   Layers,
   ChevronRight,
+  ChevronLeft,
   Info,
   Sparkles,
-  Users
+  Users,
+  ShieldCheck
 } from 'lucide-react';
 
 export default function Sidebar({ activeTab, setActiveTab, onOpenUserManagement, theme = 'light' }) {
   const isLight = theme === 'light';
+
+  // Slide 2 ảnh thực địa Lực lượng Kiểm lâm Krông Bông
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const baseUrl = import.meta.env.BASE_URL || './';
+  const slides = [
+    {
+      src: `${baseUrl}images/ranger1.jpg`,
+      caption: 'Đội Kiểm Lâm cơ động thực địa địa bàn Krông Bông'
+    },
+    {
+      src: `${baseUrl}images/ranger2.jpg`,
+      caption: 'Lực lượng bảo vệ rừng Hạt Kiểm Lâm Krông Bông'
+    }
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide(prev => (prev + 1) % slides.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [slides.length]);
 
   const menuItems = [
     {
@@ -115,21 +138,97 @@ export default function Sidebar({ activeTab, setActiveTab, onOpenUserManagement,
         </nav>
       </div>
 
-      {/* Admin User Management Button */}
-      {onOpenUserManagement && (
-        <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800">
-          <button
-            onClick={onOpenUserManagement}
-            className="w-full flex items-center gap-2.5 p-3 rounded-2xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-500/30 font-extrabold text-xs transition shadow-sm"
-          >
-            <Users className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" />
-            <div className="text-left">
-              <div>⚙️ Quản Lý Người Dùng</div>
-              <div className="text-[10px] font-normal text-purple-600/80 dark:text-purple-400/80">Sửa đổi thông tin & phân quyền</div>
+      <div className="space-y-3">
+        {/* Admin User Management Button */}
+        {onOpenUserManagement && (
+          <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800">
+            <button
+              onClick={onOpenUserManagement}
+              className="w-full flex items-center gap-2.5 p-3 rounded-2xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-500/30 font-extrabold text-xs transition shadow-sm"
+            >
+              <Users className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" />
+              <div className="text-left">
+                <div>⚙️ Quản Lý Người Dùng</div>
+                <div className="text-[10px] font-normal text-purple-600/80 dark:text-purple-400/80">Sửa đổi thông tin & phân quyền</div>
+              </div>
+            </button>
+          </div>
+        )}
+
+        {/* Đơn vị quản lý & Slide 2 ảnh thực địa */}
+        <div className="pt-3 border-t border-slate-200 dark:border-slate-800 space-y-2">
+          <div className="flex items-center gap-1.5 text-xs font-extrabold text-emerald-800 dark:text-emerald-400 px-1 uppercase tracking-wider">
+            <ShieldCheck className="w-4 h-4 text-emerald-600" />
+            <span>Đơn Vị Quản Lý</span>
+          </div>
+
+          {/* 2-Image Slide Carousel */}
+          <div className="relative rounded-2xl overflow-hidden border border-slate-300 dark:border-slate-800 shadow-md group">
+            <div className="relative h-36 w-full overflow-hidden bg-slate-950">
+              {slides.map((slide, index) => (
+                <div
+                  key={index}
+                  className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
+                    index === currentSlide ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-105 z-0'
+                  }`}
+                >
+                  <img
+                    src={slide.src}
+                    alt={slide.caption}
+                    className="w-full h-full object-cover object-center"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/25 to-transparent"></div>
+                  <div className="absolute bottom-2 left-2.5 right-2.5 text-[10px] font-bold text-white leading-tight drop-shadow-md">
+                    {slide.caption}
+                  </div>
+                </div>
+              ))}
             </div>
-          </button>
+
+            {/* Carousel Left / Right Navigation Buttons */}
+            <button
+              onClick={() => setCurrentSlide(prev => (prev === 0 ? slides.length - 1 : prev - 1))}
+              className="absolute left-1.5 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-slate-950/70 hover:bg-slate-950 text-white transition z-20 opacity-0 group-hover:opacity-100 shadow"
+              title="Ảnh trước"
+            >
+              <ChevronLeft className="w-3.5 h-3.5" />
+            </button>
+            
+            <button
+              onClick={() => setCurrentSlide(prev => (prev + 1) % slides.length)}
+              className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-slate-950/70 hover:bg-slate-950 text-white transition z-20 opacity-0 group-hover:opacity-100 shadow"
+              title="Ảnh tiếp theo"
+            >
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
+
+            {/* Carousel Indicators */}
+            <div className="absolute top-2 right-2 flex items-center gap-1 z-20 bg-slate-950/60 px-2 py-0.5 rounded-full border border-white/20">
+              {slides.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentSlide(idx)}
+                  className={`h-1.5 rounded-full transition-all ${
+                    idx === currentSlide ? 'bg-emerald-400 w-3.5' : 'bg-white/50 w-1.5'
+                  }`}
+                ></button>
+              ))}
+            </div>
+          </div>
+
+          {/* Agency Details */}
+          <div className={`p-2.5 rounded-xl text-xs space-y-0.5 ${
+            isLight ? 'bg-slate-100 text-slate-700' : 'bg-slate-950/60 text-slate-300'
+          }`}>
+            <div className="font-extrabold text-emerald-800 dark:text-emerald-400">
+              Hạt Kiểm lâm khu vực Krông Bông
+            </div>
+            <div className="text-[11px] text-slate-500 dark:text-slate-400">
+              Đô thị Krông Kmar, Huyện Krông Bông, Tỉnh Đắk Lắk
+            </div>
+          </div>
         </div>
-      )}
+      </div>
 
     </aside>
   );
