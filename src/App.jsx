@@ -16,7 +16,7 @@ import { INITIAL_DEFORESTATION_DATA_2026, INITIAL_DEFORESTATION_DATA_2025 } from
 import { DEMO_USERS } from './data/usersData';
 import { exportToExcel } from './utils/exportExcel';
 import { getWGS84Location } from './utils/coordinateConverter';
-import { CheckCircle, AlertCircle, X, Shield, Eye, UserCheck, Banknote, RefreshCw, ExternalLink } from 'lucide-react';
+import { CheckCircle, AlertCircle, X, Shield, Eye, UserCheck, Banknote, RefreshCw, ExternalLink, Sparkles } from 'lucide-react';
 
 import { 
   subscribeToIncidents, 
