@@ -30,7 +30,8 @@ export default function Header({
   setSelectedYear,
   isFirebaseConnected = false
 }) {
-  const permissions = currentUser?.permissions || {};
+  const safeUser = currentUser || { fullName: 'Cán Bộ', title: 'Kiểm Lâm', roleName: 'Người Dùng', avatarBg: 'bg-emerald-600', permissions: { canEditIncident: true, canAddIncident: true, canExportExcel: true } };
+  const permissions = safeUser?.permissions || {};
   const isLight = theme === 'light';
 
   return (
@@ -141,29 +142,29 @@ export default function Header({
           </button>
 
           {/* Logged in User Profile Badge */}
-          {currentUser && (
+          {safeUser && (
             <div className={`flex items-center gap-2 rounded-xl px-3 py-1.5 border shadow-sm ${
               isLight 
                 ? 'bg-slate-50 border-slate-200' 
                 : 'bg-slate-950 border-slate-800'
             }`}>
-              <div className={`w-7 h-7 rounded-lg ${currentUser.avatarBg} flex items-center justify-center text-white font-bold text-xs shadow`}>
-                {currentUser.fullName.charAt(0)}
+              <div className={`w-7 h-7 rounded-lg ${safeUser.avatarBg || 'bg-emerald-600'} flex items-center justify-center text-white font-bold text-xs shadow`}>
+                {(safeUser.fullName || 'U').charAt(0)}
               </div>
               <div className="text-left">
                 <div className="text-xs font-bold leading-tight flex items-center gap-1.5">
-                  <span className={isLight ? 'text-slate-900' : 'text-white'}>{currentUser.fullName}</span>
+                  <span className={isLight ? 'text-slate-900' : 'text-white'}>{safeUser.fullName || 'Người Dùng'}</span>
                   <span className={`text-[9px] font-extrabold px-1.5 py-0.2 rounded border ${
-                    currentUser.role === 'LEADER'
+                    safeUser.role === 'LEADER'
                       ? (isLight ? 'bg-emerald-100 text-emerald-800 border-emerald-300' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30')
-                      : currentUser.role === 'STAFF'
+                      : safeUser.role === 'STAFF'
                       ? (isLight ? 'bg-sky-100 text-sky-800 border-sky-300' : 'bg-sky-500/10 text-sky-400 border-sky-500/30')
                       : (isLight ? 'bg-purple-100 text-purple-800 border-purple-300' : 'bg-purple-500/10 text-purple-400 border-purple-500/30')
                   }`}>
-                    {currentUser.roleName}
+                    {safeUser.roleName || 'Cán bộ'}
                   </span>
                 </div>
-                <div className={`text-[10px] ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>{currentUser.title}</div>
+                <div className={`text-[10px] ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>{safeUser.title || 'Kiểm Lâm'}</div>
               </div>
 
               {/* User Management */}

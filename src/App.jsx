@@ -52,8 +52,8 @@ export default function App() {
       const saved = localStorage.getItem('krongbong_incidents_v10_full');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length >= 150 && parsed.some(d => d.nam === 2025)) {
-          return parsed;
+        if (Array.isArray(parsed) && parsed.length >= 150 && parsed.every(d => d && typeof d === 'object')) {
+          return parsed.filter(Boolean);
         }
       }
       localStorage.setItem('krongbong_incidents_v10_full', JSON.stringify(ALL_INITIAL_DATA));
@@ -65,7 +65,9 @@ export default function App() {
 
   useEffect(() => {
     try {
-      localStorage.setItem('krongbong_incidents_v10_full', JSON.stringify(data));
+      if (Array.isArray(data)) {
+        localStorage.setItem('krongbong_incidents_v10_full', JSON.stringify(data));
+      }
     } catch (e) {
       console.error('Error saving incidents data to localStorage', e);
     }
@@ -75,7 +77,13 @@ export default function App() {
   const [usersList, setUsersList] = useState(() => {
     try {
       const saved = localStorage.getItem('krongbong_users_v3');
-      return saved ? JSON.parse(saved) : DEMO_USERS;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0 && parsed.every(u => u && typeof u === 'object')) {
+          return parsed.filter(Boolean);
+        }
+      }
+      return DEMO_USERS;
     } catch (e) {
       return DEMO_USERS;
     }
@@ -83,7 +91,9 @@ export default function App() {
 
   useEffect(() => {
     try {
-      localStorage.setItem('krongbong_users_v3', JSON.stringify(usersList));
+      if (Array.isArray(usersList)) {
+        localStorage.setItem('krongbong_users_v3', JSON.stringify(usersList));
+      }
     } catch (e) {
       console.error('Error saving users list to localStorage', e);
     }
@@ -155,7 +165,9 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   
   // Authentication & Role State
-  const [currentUser, setCurrentUser] = useState(usersList[0]);
+  const [currentUser, setCurrentUser] = useState(() => {
+    return (Array.isArray(usersList) && usersList.length > 0 && usersList[0]) ? usersList[0] : DEMO_USERS[0];
+  });
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isUserManagementOpen, setIsUserManagementOpen] = useState(false);
 
