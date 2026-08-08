@@ -606,25 +606,25 @@ export default function App() {
 
       </div>
 
-      {/* Official Footer */}
-      <footer className={`border-t py-6 px-6 text-center shadow-xl mt-auto transition-colors duration-200 ${
+      {/* Official Compact Footer */}
+      <footer className={`border-t py-3.5 px-4 text-center mt-auto transition-colors duration-200 ${
         isLight 
-          ? 'bg-white border-slate-200 text-slate-700' 
-          : 'bg-slate-950/95 border-slate-800 text-slate-200'
+          ? 'bg-slate-50/90 border-slate-200/80 text-slate-600' 
+          : 'bg-slate-950/90 border-slate-800 text-slate-400'
       }`}>
-        <div className="max-w-[1700px] mx-auto flex flex-col items-center justify-center gap-2">
+        <div className="max-w-7xl mx-auto flex flex-col items-center justify-center gap-1">
           
-          {/* Line 1 */}
-          <div className="flex items-center justify-center gap-2 text-sm sm:text-base md:text-lg font-extrabold text-emerald-600 tracking-wide">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-md shadow-emerald-500/50 inline-block animate-pulse"></span>
-            <span>Copyright: Bản quyền thuộc về Hạt Kiểm lâm khu vực Krông Bông</span>
+          {/* Line 1: Copyright 2026 */}
+          <div className="flex items-center justify-center gap-2 text-xs sm:text-sm font-extrabold text-emerald-800 dark:text-emerald-400 tracking-wide">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-sm inline-block animate-pulse shrink-0"></span>
+            <span>Copyright © 2026 Bản quyền thuộc về Hạt Kiểm lâm khu vực Krông Bông</span>
           </div>
 
-          {/* Line 2 */}
-          <div className={`text-xs sm:text-sm md:text-base font-bold tracking-normal mt-0.5 ${
-            isLight ? 'text-slate-700' : 'text-slate-200'
+          {/* Line 2: Usage Notice */}
+          <div className={`text-[11px] sm:text-xs font-semibold tracking-normal ${
+            isLight ? 'text-slate-600' : 'text-slate-400'
           }`}>
-            Hệ thống quản lý sử dụng nội bộ.
+            Hệ thống lưu trữ & quản lý sử dụng nội bộ.
           </div>
 
         </div>
