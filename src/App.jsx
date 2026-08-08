@@ -72,7 +72,7 @@ export default function App() {
   // Persistent Dynamic Users List State in localStorage
   const [usersList, setUsersList] = useState(() => {
     try {
-      const saved = localStorage.getItem('krongbong_users_v2');
+      const saved = localStorage.getItem('krongbong_users_v3');
       return saved ? JSON.parse(saved) : DEMO_USERS;
     } catch (e) {
       return DEMO_USERS;
@@ -81,7 +81,7 @@ export default function App() {
 
   useEffect(() => {
     try {
-      localStorage.setItem('krongbong_users_v2', JSON.stringify(usersList));
+      localStorage.setItem('krongbong_users_v3', JSON.stringify(usersList));
     } catch (e) {
       console.error('Error saving users list to localStorage', e);
     }
