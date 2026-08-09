@@ -346,6 +346,78 @@ export default function AnalyticsDashboard({ data, theme = 'light' }) {
 
       </div>
 
+      {/* Bottom Row: Forest Types & Forest Owners */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+        
+        {/* Forest Types Pie Chart */}
+        <div className="glass-panel rounded-2xl p-5">
+          <div className={`flex items-center gap-2.5 mb-4 pb-3 border-b ${isLight ? 'border-slate-200' : 'border-slate-800'}`}>
+            <div className={`p-2 rounded-xl ${isLight ? 'bg-amber-100 text-amber-700' : 'bg-amber-500/10 text-amber-400'}`}>
+              <PieIcon className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className={`font-extrabold text-base ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                Loại Rừng Bị Phá
+              </h3>
+              <p className={`text-xs ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
+                Tỉ lệ diện tích rừng bị thiệt hại theo chức năng
+              </p>
+            </div>
+          </div>
+
+          <div className="h-64 w-full flex items-center justify-center">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={forestTypeData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={90}
+                  paddingAngle={5}
+                  dataKey="value"
+                >
+                  {forestTypeData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} stroke={isLight ? '#fff' : '#0f172a'} strokeWidth={3} />
+                  ))}
+                </Pie>
+                <Tooltip contentStyle={tooltipStyle} formatter={(value) => `${value} ha`} />
+                <Legend verticalAlign="bottom" height={36} iconType="circle" wrapperStyle={{ fontSize: '12px' }} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Forest Owners Bar Chart */}
+        <div className="glass-panel rounded-2xl p-5">
+          <div className={`flex items-center gap-2.5 mb-4 pb-3 border-b ${isLight ? 'border-slate-200' : 'border-slate-800'}`}>
+            <div className={`p-2 rounded-xl ${isLight ? 'bg-indigo-100 text-indigo-700' : 'bg-indigo-500/10 text-indigo-400'}`}>
+              <Trees className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className={`font-extrabold text-base ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                Chủ Rừng Bị Thiệt Hại
+              </h3>
+              <p className={`text-xs ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
+                Diện tích bị phá theo từng chủ rừng quản lý
+              </p>
+            </div>
+          </div>
+
+          <div className="h-64 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={ownerData} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke={gridColor} />
+                <XAxis type="number" stroke={axisColor} fontSize={11} />
+                <YAxis dataKey="name" type="category" stroke={axisColor} fontSize={11} width={100} />
+                <Tooltip contentStyle={tooltipStyle} formatter={(value) => `${value} ha`} />
+                <Bar dataKey="Diện tích (ha)" fill="#8b5cf6" radius={[0, 4, 4, 0]} barSize={20} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+        
+      </div>
     </div>
   );
 }
