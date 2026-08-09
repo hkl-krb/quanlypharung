@@ -106,7 +106,7 @@ export default function PredictiveAnalyticsPanel({ data, theme = 'light' }) {
                 </div>
               ))}
             </div>
-            <div className={`text-[11px] pt-2 border-t italic font-medium ${isLight ? 'border-slate-300 text-slate-600' : 'border-slate-800 text-slate-400'}`}>
+            <div className={`text-xs pt-2 border-t italic font-medium ${isLight ? 'border-slate-300 text-slate-600' : 'border-slate-800 text-slate-400'}`}>
               Địa giới hành chính cần tăng cường phối hợp Lực lượng xã.
             </div>
           </div>
@@ -151,7 +151,7 @@ export default function PredictiveAnalyticsPanel({ data, theme = 'light' }) {
                 </div>
               ))}
             </div>
-            <div className={`text-[11px] pt-2 border-t italic font-medium ${isLight ? 'border-slate-300 text-slate-600' : 'border-slate-800 text-slate-400'}`}>
+            <div className={`text-xs pt-2 border-t italic font-medium ${isLight ? 'border-slate-300 text-slate-600' : 'border-slate-800 text-slate-400'}`}>
               Tiểu khu rủi ro cao nhất cần lập chốt liên ngành.
             </div>
           </div>
@@ -190,7 +190,7 @@ export default function PredictiveAnalyticsPanel({ data, theme = 'light' }) {
                 </div>
               ))}
             </div>
-            <div className={`text-[11px] pt-2 border-t italic font-medium ${isLight ? 'border-slate-300 text-slate-600' : 'border-slate-400'}`}>
+            <div className={`text-xs pt-2 border-t italic font-medium ${isLight ? 'border-slate-300 text-slate-600' : 'border-slate-800 text-slate-400'}`}>
               Khoảnh bị tác động nhiều nhất cần kiểm tra thực địa.
             </div>
           </div>
